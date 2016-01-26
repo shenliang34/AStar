@@ -10,9 +10,106 @@ package com
 	 */
 	public class Container extends Sprite
 	{
+		private var _container:Sprite;
+		
+		private var _randomList:Array
 		public function Container()
 		{
-			super();
+			init();
+		}
+		
+		private function init():void
+		{
+			// TODO Auto Generated method stub
+			_container = new Sprite();
+			addChild(_container);
+			
+			getRandom();
+			
+			initView();
+		}
+		
+		private function initView():void
+		{
+			// TODO Auto Generated method stub
+			var vx:int;
+			var vy:int
+			_container.graphics.lineStyle(1,0xffffff);
+			for (var j:int = 0; j < PublicData.COL; j++) 
+			{
+				_container.graphics.moveTo(0,PublicData.GIRD_HEIGHT * j);
+				_container.graphics.lineTo(PublicData.GIRD_WIDTH * j,PublicData.GIRD_HEIGHT * j);
+			}
+			
+			for (var i:int = 0; i < PublicData.COL * PublicData.ROW; i++) 
+			{
+				vx = i % PublicData.COL;
+				vy = i / PublicData.ROW;
+				var g:Gird = new Gird();
+				_container.addChild(g);
+				
+				var status:int = _randomList[vx][vy];
+				g.setStatus(status);
+				g.setPos(vx * PublicData.GIRD_WIDTH , vy * PublicData.GIRD_HEIGHT);
+			}
+			
+			
+		}
+		
+		private function getRandom():void
+		{
+			// TODO Auto Generated method stub
+			
+			_randomList = new Array();
+			for (var i:int = 0; i < PublicData.COL; i++) 
+			{
+				_randomList.push(new Array(PublicData.ROW));
+			}
+			
+			var total:int = PublicData.ROW * PublicData.COL;
+			var surplus:int = total - PublicData.WALL_TOTAL;
+			var count:int = 0;
+			
+			var vx:int;
+			var vy:int;
+			
+			//障碍数据
+			while( count < PublicData.WALL_TOTAL)
+			{
+				vx = int(Math.random() * PublicData.ROW);
+				vy = int(Math.random() * PublicData.COL);
+				if(_randomList[vx][vy] == null)
+				{
+					count ++;
+					_randomList[vx][vy] = GirdType.TYPE_WALL;
+				}
+			}
+			//
+			while( count < PublicData.WALL_TOTAL)
+			{
+				vx = int(Math.random() * PublicData.ROW);
+				vy = int(Math.random() * PublicData.COL);
+				if(_randomList[vx][vy] == null)
+				{
+					count ++;
+					_randomList[vx][vy] = GirdType.TYPE_WALL;
+				}
+			}
+			
+			for (var j:int = 0; j < PublicData.COL; j++) 
+			{
+				for (var k:int = 0; k < PublicData.ROW; k++) 
+				{
+					if(_randomList[vx][vy] == null)
+					{
+						_randomList[vx][vy] = GirdType.TYPE_ROAD;
+					}
+				}
+				
+			}
+			
+			//
+			
 		}
 	}
 }
