@@ -34,26 +34,25 @@ package com
 			// TODO Auto Generated method stub
 			var vx:int;
 			var vy:int
-			_container.graphics.lineStyle(1,0xffffff);
-			for (var j:int = 0; j < PublicData.COL; j++) 
+//			_container.graphics.lineStyle(1,0xffffff);
+//			for (var j:int = 0; j < PublicData.COL; j++) 
+//			{
+//				_container.graphics.moveTo(0,PublicData.GIRD_HEIGHT * j);
+//				_container.graphics.lineTo(PublicData.GIRD_WIDTH * j,PublicData.GIRD_HEIGHT * j);
+//			}
+			
+			for (var i:int = 0; i < PublicData.ROW; i++) 
 			{
-				_container.graphics.moveTo(0,PublicData.GIRD_HEIGHT * j);
-				_container.graphics.lineTo(PublicData.GIRD_WIDTH * j,PublicData.GIRD_HEIGHT * j);
+				for (var j:int = 0; j < PublicData.COL; j++) 
+				{
+					var g:Gird = new Gird();
+					_container.addChild(g);
+					
+					var status:int = _randomList[i][j];
+					g.setStatus(status);
+					g.setPos(j ,i);
+				}
 			}
-			
-			for (var i:int = 0; i < PublicData.COL * PublicData.ROW; i++) 
-			{
-				vx = i % PublicData.COL;
-				vy = i / PublicData.ROW;
-				var g:Gird = new Gird();
-				_container.addChild(g);
-				
-				var status:int = _randomList[vx][vy];
-				g.setStatus(status);
-				g.setPos(vx * PublicData.GIRD_WIDTH , vy * PublicData.GIRD_HEIGHT);
-			}
-			
-			
 		}
 		
 		private function getRandom():void
@@ -61,9 +60,9 @@ package com
 			// TODO Auto Generated method stub
 			
 			_randomList = new Array();
-			for (var i:int = 0; i < PublicData.COL; i++) 
+			for (var i:int = 0; i < PublicData.ROW; i++) 
 			{
-				_randomList.push(new Array(PublicData.ROW));
+				_randomList.push(new Array(PublicData.COL));
 			}
 			
 			var total:int = PublicData.ROW * PublicData.COL;
@@ -76,40 +75,42 @@ package com
 			//障碍数据
 			while( count < PublicData.WALL_TOTAL)
 			{
-				vx = int(Math.random() * PublicData.ROW);
-				vy = int(Math.random() * PublicData.COL);
+				vx = Math.floor(Math.random() * PublicData.ROW);
+				vy = Math.floor(Math.random() * PublicData.COL);
 				if(_randomList[vx][vy] == null)
 				{
 					count ++;
 					_randomList[vx][vy] = GirdType.TYPE_WALL;
 				}
 			}
-			//
-			while( count < PublicData.WALL_TOTAL)
-			{
-				vx = int(Math.random() * PublicData.ROW);
-				vy = int(Math.random() * PublicData.COL);
-				if(_randomList[vx][vy] == null)
-				{
-					count ++;
-					_randomList[vx][vy] = GirdType.TYPE_WALL;
-				}
-			}
+//			//
+//			while( count < PublicData.WALL_TOTAL)
+//			{
+//				vx = int(Math.random() * PublicData.ROW);
+//				vy = int(Math.random() * PublicData.COL);
+//				if(_randomList[vx][vy] == null)
+//				{
+//					count ++;
+//					_randomList[vx][vy] = GirdType.TYPE_WALL;
+//				}
+//			}
 			
 			for (var j:int = 0; j < PublicData.COL; j++) 
 			{
 				for (var k:int = 0; k < PublicData.ROW; k++) 
 				{
-					if(_randomList[vx][vy] == null)
+					if(_randomList[k][j] == null)
 					{
-						_randomList[vx][vy] = GirdType.TYPE_ROAD;
+						_randomList[k][j] = GirdType.TYPE_ROAD;
 					}
 				}
-				
 			}
 			
 			//
-			
+			for (var i2:int = 0; i2 < PublicData.ROW; i2++) 
+			{
+				trace(_randomList[i2]);
+			}
 		}
 	}
 }

@@ -22,8 +22,8 @@ package com
 		
 		public function setPos(px:Number,py:Number):void
 		{
-			setX(px);
-			setY(py);
+			setX(px * PublicData.GIRD_WIDTH);
+			setY(py * PublicData.GIRD_HEIGHT);
 		}
 		
 		public function setX(px:Number):void
@@ -61,11 +61,11 @@ package com
 					drawRect(GirdType.WALL_COLOR);
 					break;
 				}
-				case GirdType.TYPE_TARGET:
-				{
-					drawRect(GirdType.TARGET_COLOR);
-					break;
-				}
+//				case GirdType.TYPE_TARGET:
+//				{
+//					drawRect(GirdType.TARGET_COLOR);
+//					break;
+//				}
 					
 				default:
 				{

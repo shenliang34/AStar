@@ -1,5 +1,7 @@
 package
 {
+	import com.Container;
+	
 	import flash.display.Sprite;
 	
 	/**
@@ -13,8 +15,8 @@ package
 	{
 		public function AStar()
 		{
-//			var container:Container = new Container();
-//			addChild(container);
+			var container:Container = new Container();
+			addChild(container);
 		}
 	}
 }
