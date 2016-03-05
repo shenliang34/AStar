@@ -1,6 +1,7 @@
 package com
 {
 	import flash.display.Sprite;
+	import flash.events.MouseEvent;
 	
 	/**
 	 * @author shenliangliang
@@ -12,7 +13,15 @@ package com
 	{
 		private var _container:Sprite;
 		
-		private var _randomList:Array
+		private var _randomList:Array;
+		
+		private var _player:Gird;
+		
+		private var targetX:int;
+		private var targetY:int;
+		
+		private var mainX:int;
+		private var mainY:int;
 		public function Container()
 		{
 			init();
@@ -24,9 +33,19 @@ package com
 			_container = new Sprite();
 			addChild(_container);
 			
+			_container.addEventListener(MouseEvent.CLICK,onClick);
 			getRandom();
 			
 			initView();
+		}
+		
+		protected function onClick(event:MouseEvent):void
+		{
+			// TODO Auto-generated method stub
+			targetX = Math.floor(event.stageX / PublicData.GIRD_WIDTH);
+			targetY = Math.floor(event.stageY / PublicData.GIRD_HEIGHT);
+			trace(targetX,targetY);
+			findRoad();
 		}
 		
 		private function initView():void
@@ -34,12 +53,6 @@ package com
 			// TODO Auto Generated method stub
 			var vx:int;
 			var vy:int
-//			_container.graphics.lineStyle(1,0xffffff);
-//			for (var j:int = 0; j < PublicData.COL; j++) 
-//			{
-//				_container.graphics.moveTo(0,PublicData.GIRD_HEIGHT * j);
-//				_container.graphics.lineTo(PublicData.GIRD_WIDTH * j,PublicData.GIRD_HEIGHT * j);
-//			}
 			
 			for (var i:int = 0; i < PublicData.ROW; i++) 
 			{
@@ -83,17 +96,7 @@ package com
 					_randomList[vx][vy] = GirdType.TYPE_WALL;
 				}
 			}
-//			//
-//			while( count < PublicData.WALL_TOTAL)
-//			{
-//				vx = int(Math.random() * PublicData.ROW);
-//				vy = int(Math.random() * PublicData.COL);
-//				if(_randomList[vx][vy] == null)
-//				{
-//					count ++;
-//					_randomList[vx][vy] = GirdType.TYPE_WALL;
-//				}
-//			}
+			
 			
 			for (var j:int = 0; j < PublicData.COL; j++) 
 			{
@@ -111,6 +114,29 @@ package com
 			{
 				trace(_randomList[i2]);
 			}
+			
+			//主角
+			while(true)
+			{
+				vx = Math.floor(Math.random() * PublicData.ROW);
+				vy = Math.floor(Math.random() * PublicData.COL);
+				_randomList[vx][vy] = GirdType.TYPE_TARGET;
+				break;
+			}
+		}
+		
+		private function findRoad():Array
+		{
+			var path:Array = [];
+			if(_randomList[targetY][targetX] == GirdType.TYPE_WALL)
+			{
+				return path;
+			}
+			else
+			{
+				
+			}
+			return null;
 		}
 	}
 }

@@ -61,11 +61,11 @@ package com
 					drawRect(GirdType.WALL_COLOR);
 					break;
 				}
-//				case GirdType.TYPE_TARGET:
-//				{
-//					drawRect(GirdType.TARGET_COLOR);
-//					break;
-//				}
+				case GirdType.TYPE_TARGET:
+				{
+					drawRect(GirdType.TARGET_COLOR);
+					break;
+				}
 					
 				default:
 				{
