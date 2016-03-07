@@ -2,8 +2,10 @@ package com
 {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.sensors.Accelerometer;
 	import flash.utils.Dictionary;
 	import flash.utils.clearInterval;
+	import flash.utils.getTimer;
 	import flash.utils.setInterval;
 	import flash.utils.setTimeout;
 	
@@ -30,6 +32,7 @@ package com
 		
 		private var _unLockList:Array = [];
 		private var _lockList:Dictionary = new Dictionary();
+		private var _girdList:Array = new Array();
 		public function Container()
 		{
 			init();
@@ -53,10 +56,15 @@ package com
 		protected function onClick(event:MouseEvent):void
 		{
 			// TODO Auto-generated method stub
+			_container.mouseEnabled = false;
+			_container.mouseChildren = false;
 			targetX = Math.floor(event.stageX / PublicData.GIRD_WIDTH);
 			targetY = Math.floor(event.stageY / PublicData.GIRD_HEIGHT);
 			trace(targetX,targetY);
+			var start:Number = getTimer();
 			var path:Array = findRoad();
+			var end:Number = getTimer();
+			trace("消耗时间："+ (end - start) +"毫秒");
 			walk(path);
 			trace(path);
 		}
@@ -66,7 +74,8 @@ package com
 			// TODO Auto Generated method stub
 			var posX:Number = 0;
 			var posY:Number = 0;
-			if(path)
+			_drawSprite.graphics.clear();
+			if(path && path.length > 0)
 			{
 				var sign:Sign;
 				var isStart:Boolean = true;
@@ -91,30 +100,15 @@ package com
 					
 					if(path.length<=0)
 					{
+						clear();
 						clearInterval(intval);
 					}
-				},500);
-//				while(true)
-//				{
-//					sign = path.shift();
-//					posX = sign.vx * PublicData.GIRD_WIDTH +PublicData.GIRD_WIDTH/2;
-//					posY = sign.vy * PublicData.GIRD_HEIGHT +PublicData.GIRD_HEIGHT/2;
-//					if(isStart)
-//					{
-//						isStart = false;
-//						_drawSprite.graphics.lineStyle(1,0xffff00);
-//						_drawSprite.graphics.moveTo(posX,posY);
-//					}
-//					else
-//					{
-//						_drawSprite.graphics.lineTo(posX,posY);
-//					}
-//					if(path.length<=0)
-//					{
-//						break;
-//					}
-//				}
-				
+				},50);
+			}
+			else
+			{
+				_container.mouseEnabled = true;
+				trace("死路");
 			}
 		}
 		
@@ -256,6 +250,21 @@ package com
 				sign = null;
 				return path.reverse();
 			}
+		}
+		/**
+		 *清除 
+		 * 
+		 */		
+		private function clear():void
+		{
+			mainX = targetX;
+			mainY = targetY;
+			_player.setPos(mainX,mainY);
+			
+			_container.mouseEnabled = true;
+			_unLockList = new Array();
+			_lockList = new Dictionary();
+			_lockList = new Dictionary();
 		}
 		
 		private function addUnLockList(sign:Sign):void

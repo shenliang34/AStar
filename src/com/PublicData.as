@@ -8,7 +8,7 @@ package com
 	 */
 	public class PublicData
 	{
-		public static const WALL_TOTAL:int = 1200;//障碍
+		public static const WALL_TOTAL:int = 1500;//障碍
 		
 		public static const ROW:int = 60;//行
 		public static const COL:int = 80;//列
