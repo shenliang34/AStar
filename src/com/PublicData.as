@@ -15,5 +15,8 @@ package com
 		
 		public static const GIRD_WIDTH:Number = 10;//格子宽
 		public static const GIRD_HEIGHT:Number = 10;//格子高
+		
+		public static const LINE_VALUE:int = 10;
+		public static const BIAS_VALUE:int = 14;
 	}
 }

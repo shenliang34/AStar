@@ -73,7 +73,11 @@ package com
 				}
 			}
 		}
-		
+		/**
+		 *划矩形 
+		 * @param color
+		 * 
+		 */		
 		private function drawRect(color:uint):void
 		{
 			graphics.clear();

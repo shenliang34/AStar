@@ -2,6 +2,10 @@ package com
 {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.utils.Dictionary;
+	import flash.utils.clearInterval;
+	import flash.utils.setInterval;
+	import flash.utils.setTimeout;
 	
 	/**
 	 * @author shenliangliang
@@ -12,6 +16,7 @@ package com
 	public class Container extends Sprite
 	{
 		private var _container:Sprite;
+		private var _drawSprite:Sprite;
 		
 		private var _randomList:Array;
 		
@@ -22,6 +27,9 @@ package com
 		
 		private var mainX:int;
 		private var mainY:int;
+		
+		private var _unLockList:Array = [];
+		private var _lockList:Dictionary = new Dictionary();
 		public function Container()
 		{
 			init();
@@ -32,6 +40,9 @@ package com
 			// TODO Auto Generated method stub
 			_container = new Sprite();
 			addChild(_container);
+			
+			_drawSprite = new Sprite();
+			addChild(_drawSprite);
 			
 			_container.addEventListener(MouseEvent.CLICK,onClick);
 			getRandom();
@@ -45,7 +56,66 @@ package com
 			targetX = Math.floor(event.stageX / PublicData.GIRD_WIDTH);
 			targetY = Math.floor(event.stageY / PublicData.GIRD_HEIGHT);
 			trace(targetX,targetY);
-			findRoad();
+			var path:Array = findRoad();
+			walk(path);
+			trace(path);
+		}
+		
+		private function walk(path:Array):void
+		{
+			// TODO Auto Generated method stub
+			var posX:Number = 0;
+			var posY:Number = 0;
+			if(path)
+			{
+				var sign:Sign;
+				var isStart:Boolean = true;
+				
+				var intval:int = setInterval(function w():void
+				{
+					sign = path.shift();
+					posX = sign.vx * PublicData.GIRD_WIDTH +PublicData.GIRD_WIDTH/2;
+					posY = sign.vy * PublicData.GIRD_HEIGHT +PublicData.GIRD_HEIGHT/2;
+					_player.setPos(sign.vx,sign.vy);
+					
+					if(isStart)
+					{
+						isStart = false;
+						_drawSprite.graphics.lineStyle(1,0xffff00);
+						_drawSprite.graphics.moveTo(posX,posY);
+					}
+					else
+					{
+						_drawSprite.graphics.lineTo(posX,posY);
+					}
+					
+					if(path.length<=0)
+					{
+						clearInterval(intval);
+					}
+				},500);
+//				while(true)
+//				{
+//					sign = path.shift();
+//					posX = sign.vx * PublicData.GIRD_WIDTH +PublicData.GIRD_WIDTH/2;
+//					posY = sign.vy * PublicData.GIRD_HEIGHT +PublicData.GIRD_HEIGHT/2;
+//					if(isStart)
+//					{
+//						isStart = false;
+//						_drawSprite.graphics.lineStyle(1,0xffff00);
+//						_drawSprite.graphics.moveTo(posX,posY);
+//					}
+//					else
+//					{
+//						_drawSprite.graphics.lineTo(posX,posY);
+//					}
+//					if(path.length<=0)
+//					{
+//						break;
+//					}
+//				}
+				
+			}
 		}
 		
 		private function initView():void
@@ -54,18 +124,22 @@ package com
 			var vx:int;
 			var vy:int
 			
-			for (var i:int = 0; i < PublicData.ROW; i++) 
+			for (var i:int = 0; i < PublicData.COL; i++) 
 			{
-				for (var j:int = 0; j < PublicData.COL; j++) 
+				for (var j:int = 0; j < PublicData.ROW; j++) 
 				{
 					var g:Gird = new Gird();
 					_container.addChild(g);
 					
 					var status:int = _randomList[i][j];
 					g.setStatus(status);
-					g.setPos(j ,i);
+					g.setPos(i ,j);
 				}
 			}
+			_player = new Gird();
+			_container.addChild(_player);
+			_player.setStatus(GirdType.TYPE_TARGET);
+			_player.setPos(mainX,mainY);
 		}
 		
 		private function getRandom():void
@@ -73,9 +147,9 @@ package com
 			// TODO Auto Generated method stub
 			
 			_randomList = new Array();
-			for (var i:int = 0; i < PublicData.ROW; i++) 
+			for (var i:int = 0; i < PublicData.COL; i++) 
 			{
-				_randomList.push(new Array(PublicData.COL));
+				_randomList.push(new Array(PublicData.ROW));
 			}
 			
 			var total:int = PublicData.ROW * PublicData.COL;
@@ -88,8 +162,8 @@ package com
 			//障碍数据
 			while( count < PublicData.WALL_TOTAL)
 			{
-				vx = Math.floor(Math.random() * PublicData.ROW);
-				vy = Math.floor(Math.random() * PublicData.COL);
+				vx = Math.floor(Math.random() * PublicData.COL);
+				vy = Math.floor(Math.random() * PublicData.ROW);
 				if(_randomList[vx][vy] == null)
 				{
 					count ++;
@@ -102,15 +176,15 @@ package com
 			{
 				for (var k:int = 0; k < PublicData.ROW; k++) 
 				{
-					if(_randomList[k][j] == null)
+					if(_randomList[j][k] == null)
 					{
-						_randomList[k][j] = GirdType.TYPE_ROAD;
+						_randomList[j][k] = GirdType.TYPE_ROAD;
 					}
 				}
 			}
 			
 			//
-			for (var i2:int = 0; i2 < PublicData.ROW; i2++) 
+			for (var i2:int = 0; i2 < PublicData.COL; i2++) 
 			{
 				trace(_randomList[i2]);
 			}
@@ -118,9 +192,11 @@ package com
 			//主角
 			while(true)
 			{
-				vx = Math.floor(Math.random() * PublicData.ROW);
-				vy = Math.floor(Math.random() * PublicData.COL);
-				_randomList[vx][vy] = GirdType.TYPE_TARGET;
+				vx = Math.floor(Math.random() * PublicData.COL);
+				vy = Math.floor(Math.random() * PublicData.ROW);
+				mainX = vx;
+				mainY = vy;
+				trace(mainX,mainY);
 				break;
 			}
 		}
@@ -128,15 +204,107 @@ package com
 		private function findRoad():Array
 		{
 			var path:Array = [];
-			if(_randomList[targetY][targetX] == GirdType.TYPE_WALL)
+			if(_randomList[targetX][targetY] == GirdType.TYPE_WALL)
 			{
 				return path;
 			}
 			else
 			{
+				/****/
+				var startX:int = mainX;
+				/****/
+				var startY:int = mainY;
 				
+				var sign:Sign = new Sign(mainX,mainY,0,0,null);
+				_lockList[mainX+"_"+mainY] = sign;
+				
+				while(true)
+				{
+					addUnLockList(createSign(startX - 1,startY - 1,true,sign));
+					addUnLockList(createSign(startX    ,startY - 1,false,sign));
+					addUnLockList(createSign(startX + 1,startY - 1,true,sign));
+					
+					addUnLockList(createSign(startX - 1,startY    ,false,sign));
+					addUnLockList(createSign(startX + 1,startY    ,false,sign));
+					
+					addUnLockList(createSign(startX - 1,startY + 1,true,sign));
+					addUnLockList(createSign(startX    ,startY + 1,false,sign));
+					addUnLockList(createSign(startX + 1,startY + 1,true,sign));
+					
+					if(_unLockList.length == 0)
+					{
+						break;
+					}
+					
+					_unLockList.sortOn("f",Array.NUMERIC);
+					sign = _unLockList.shift();
+					_lockList[sign.vx + "_" + sign.vy] = sign;
+					startX = sign.vx;
+					startY = sign.vy;
+					
+					//找到
+					if(startX == targetX && startY == targetY)
+					{
+						while(sign != null)
+						{
+							path.push(sign);
+							sign = sign.parent;
+						}
+						break;
+					}
+				}
+				sign = null;
+				return path.reverse();
 			}
-			return null;
+		}
+		
+		private function addUnLockList(sign:Sign):void
+		{
+			if(sign)
+			{
+				_unLockList.push(sign);
+				_unLockList[sign.vx + "_" + sign.vy] = sign;
+			}
+		}
+		/**
+		 * 
+		 * @param vx
+		 * @param vy
+		 * @param isBias
+		 * @param p
+		 * @return 
+		 * 
+		 */		
+		private function createSign(vx:int,vy:int,isBias:Boolean,p:Sign):Sign
+		{
+			var sign:Sign = null;
+			if(vx < 0 || vy < 0 || vx >= PublicData.COL || vy >= PublicData.ROW)
+			{
+				return null;
+			}
+			if(_randomList[vx][vy] == GirdType.TYPE_WALL)
+			{
+				return null;
+			}
+			
+			if(_lockList[vx + "_" + vy])
+			{
+				return null;	
+			}
+			if(_unLockList[vx +"_"+vy])
+			{
+				return null;
+			}
+			//
+			if(isBias)
+			{
+				if(_randomList[p.vx][vy] == GirdType.TYPE_WALL || _randomList[vx][p.vy] == GirdType.TYPE_WALL)
+				{
+				 	return null;	
+				}
+			}
+			sign = new Sign(vx,vy,isBias?PublicData.BIAS_VALUE:PublicData.LINE_VALUE,Math.abs(targetX - vx) + Math.abs(targetY - vy) * 10,p);
+			return sign;
 		}
 	}
 }
