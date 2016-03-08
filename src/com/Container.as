@@ -1,6 +1,7 @@
 package com
 {
 	import flash.display.Sprite;
+	import flash.events.AccelerometerEvent;
 	import flash.events.MouseEvent;
 	import flash.sensors.Accelerometer;
 	import flash.utils.Dictionary;
@@ -107,7 +108,9 @@ package com
 			}
 			else
 			{
-				_container.mouseEnabled = true;
+				targetX = mainX;
+				targetY = mainY;
+				clear()
 				trace("死路");
 			}
 		}
@@ -214,15 +217,15 @@ package com
 				
 				while(true)
 				{
-					addUnLockList(createSign(startX - 1,startY - 1,true,sign));
+					addUnLockList(createSign(startX - 1,startY    ,false,sign));
 					addUnLockList(createSign(startX    ,startY - 1,false,sign));
+					addUnLockList(createSign(startX + 1,startY    ,false,sign));
+					addUnLockList(createSign(startX    ,startY + 1,false,sign));
+					
+					addUnLockList(createSign(startX - 1,startY - 1,true,sign));
 					addUnLockList(createSign(startX + 1,startY - 1,true,sign));
 					
-					addUnLockList(createSign(startX - 1,startY    ,false,sign));
-					addUnLockList(createSign(startX + 1,startY    ,false,sign));
-					
 					addUnLockList(createSign(startX - 1,startY + 1,true,sign));
-					addUnLockList(createSign(startX    ,startY + 1,false,sign));
 					addUnLockList(createSign(startX + 1,startY + 1,true,sign));
 					
 					if(_unLockList.length == 0)
@@ -230,7 +233,7 @@ package com
 						break;
 					}
 					
-					_unLockList.sortOn("f",Array.NUMERIC);
+					_unLockList.sortOn(["f","h","g"],[Array.NUMERIC,Array.NUMERIC,Array.NUMERIC]);
 					sign = _unLockList.shift();
 					_lockList[sign.vx + "_" + sign.vy] = sign;
 					startX = sign.vx;
